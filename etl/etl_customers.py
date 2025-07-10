@@ -1,5 +1,10 @@
 import pandas as pd
 import re
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from config import BASE_COLS
 
 def normalize_phone(phone):
     digits = re.sub(r"\D", "", str(phone))
@@ -10,14 +15,9 @@ def transform_customers(online_df: pd.DataFrame, offline_df: pd.DataFrame) -> pd
     c_online_df = online_df.copy()
     c_offline_df = offline_df.copy()
 
-    base_cols = [
-        "customer_firstname", "customer_lastname", "customer_gender", "customer_shirtsize",
-        "customer_email", "customer_phone", "customer_age", "customer_address",
-        "address_details", "customer_city", "customer_state"]
-
     # Online
     c_online_df["customer_phone"] = c_online_df["customer_phone"].apply(normalize_phone)
-    c_online_df = c_online_df[base_cols]
+    c_online_df = c_online_df[BASE_COLS]
 
     # Offline
     c_offline_df = c_offline_df.assign(
@@ -29,7 +29,7 @@ def transform_customers(online_df: pd.DataFrame, offline_df: pd.DataFrame) -> pd
         customer_state=c_offline_df["store_state"]
     )
     c_offline_df["customer_phone"] = c_offline_df["customer_phone"].apply(normalize_phone)
-    c_offline_df = c_offline_df[base_cols]
+    c_offline_df = c_offline_df[BASE_COLS]
 
     # Combine and deduplicate
     return (pd.concat([c_online_df, c_offline_df], ignore_index=True)
@@ -39,7 +39,7 @@ def transform_customers(online_df: pd.DataFrame, offline_df: pd.DataFrame) -> pd
 # Upserts new customers to customers table in 2 schemas
 def upsert_customers(df, conn, schema):
     if df.empty:
-        print(f"⚠️ No customer records to insert for schema '{schema}'.")
+        print(f"No customer records to insert for schema '{schema}'.")
         return
 
     columns = list(df.columns)
@@ -70,5 +70,5 @@ def upsert_customers(df, conn, schema):
 
         conn.commit()
 
-    print(f"✅ Upserted {len(df)} records into {schema}.customers")
-    print(f"🆕 Newly inserted: {newly_inserted_count}")
+    print(f"Upserted {len(df)} records into {schema}.customers")
+    print(f"Newly inserted: {newly_inserted_count}")

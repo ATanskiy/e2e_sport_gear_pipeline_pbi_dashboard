@@ -54,7 +54,8 @@ SEEDS_MAPPING = {
 }
 
 # Sleep time between ETL batches (in seconds)
-TIME_TO_SLEEP = 5
+TIME_TO_SLEEP = 10
+TIME_TO_SLEEP_ETL = 20
 
 # Other shared settings
 DATE_FORMAT = "%Y/%m/%d"
@@ -64,10 +65,10 @@ TMSTMP =  "tmstmp"
 DATE = "date"
 
 # Paths
-CREATE_TABLES_SCHEMAS = "db/ddl/create_schemas_tables.sql"
-DROP_TABLE_SCHEMAS = "db/ddl/drop_schemas_tables.sql"
-TRUNCATE_ALL_TABLES = "db/ddl/trancate_all_tables.sql"
-TRUNCATE_DIM_TABLES = "db/ddl/trancate_dim_tables.sql"
+CREATE_TABLES_SCHEMAS_PATH = "db/ddl/create_schemas_tables.sql"
+DROP_TABLE_SCHEMAS_PATH = "db/ddl/drop_schemas_tables.sql"
+TRUNCATE_ALL_TABLES_PATH = "db/ddl/trancate_all_tables.sql"
+TRUNCATE_DIM_TABLES_PATH = "db/ddl/trancate_dim_tables.sql"
 
 # Scripts to run in order
 SCRIPTS = [
@@ -75,5 +76,67 @@ SCRIPTS = [
     "scripts/2_create_schemas_tables.py",
     "scripts/3_load_dim_tables.py",
     "scripts/4_extract_raw_to_s3_daily.py"
+]
+
+SCRIPT_ETL = "scripts/5_run_etl_upsert.py"
+
+#ETL part
+# Customers ETL variables
+BASE_COLS = [
+    "customer_firstname", "customer_lastname", "customer_gender", "customer_shirtsize",
+    "customer_email", "customer_phone", "customer_age", "customer_address",
+    "address_details", "customer_city", "customer_state"]
+
+# Sales ETL variables
+OFFLINE_COLUMNS_TO_STANDARDISE = {
+        "product_name": "product",
+        "brand": "brand_name",
+        "category": "product_category",
+        "subcategory": "product_subcategory",
+        "date": "tmstmp",
+        "price": "product_price",
+        "amount_sold": "total_amount",
+        "cost_amount": "total_costs"
+    }
+
+ONLINE_COLUMNS_TO_STANDARDISE = {
+        "payment_type": "payment_method"
+    }
+
+OFFLINE_SALES_CHANNEL = "Offline"
+ONLINE_SALES_CHANNEL = "Online"
+
+DIM_TABLES = {
+    "products": {
+        "columns": ["product_id", "product", "brand_name"],
+        "join_keys": ["product", "brand_name"]
+    },
+    "customers": {
+        "columns": ["customer_id", "customer_email"],
+        "join_keys": ["customer_email"]
+    },
+    "stores": {
+        "columns": ["store_id", "store_type", "store_street", "store_city", "store_state"],
+        "join_keys": ["store_type", "store_street", "store_city", "store_state"]
+    },
+    "employees": {
+        "columns": ["employee_id", "employee_firstname", "employee_lastname", "employee_email", "employee_skill", "employee_education"],
+        "join_keys": ["employee_firstname", "employee_lastname", "employee_email", "employee_skill", "employee_education"]
+    },
+    "payment_methods": {
+        "columns": ["payment_method_id", "payment_method"],
+        "join_keys": ["payment_method"]
+    },
+    "shipping_methods": {
+        "columns": ["shipping_method_id", "shipping_method"],
+        "join_keys": ["shipping_method"]
+    }
+}
+
+# Final reorder
+SALES_COLUMN_ORDER = [
+    'tmstmp', 'product_id', 'customer_id', 'store_id', 'employee_id',
+    'payment_method_id', 'shipping_method_id', 'product_price', 'coupon_discount',
+    'quantity_sold', 'total_amount', 'total_costs', 'sales_channel', 'store_website', 'supplier'
 ]
 

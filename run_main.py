@@ -1,7 +1,11 @@
 import subprocess
 import time
+import os
 import sys
 from config import SCRIPTS
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from config import TIME_TO_SLEEP
 
 # 1. Use the same Python interpreter that runs this script
 python_exec = sys.executable
@@ -11,7 +15,7 @@ print("Starting Docker containers...")
 subprocess.run(["docker-compose", "up", "-d"], check=True)
 
 print("Waiting for services to become available...")
-time.sleep(4)
+time.sleep(TIME_TO_SLEEP)
 
 # 3. Run each script using the same Python interpreter
 for script in SCRIPTS:

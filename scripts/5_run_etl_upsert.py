@@ -22,7 +22,7 @@ def list_all_keys(bucket_name):
                 keys.add(obj['Key'])
     except ClientError as e:
         if e.response['Error']['Code'] == 'NoSuchBucket':
-            print(f"🪣 Bucket '{bucket_name}' does not exist.")
+            print(f"Bucket '{bucket_name}' does not exist.")
         else:
             raise
     return keys
@@ -31,7 +31,7 @@ def ensure_processed_bucket_exists():
     try:
         S3.head_bucket(Bucket=MINIO_PROCESSED)
     except ClientError:
-        print(f"🪣 Creating bucket '{MINIO_PROCESSED}'...")
+        print(f"Creating bucket '{MINIO_PROCESSED}'...")
         S3.create_bucket(Bucket=MINIO_PROCESSED)
 
 def download_and_concat(file_list):
@@ -45,19 +45,19 @@ def download_and_concat(file_list):
 def main():
     ensure_processed_bucket_exists()
 
-    print("📦 Listing files in unprocessed-data...")
+    print("Listing files in unprocessed-data...")
     unprocessed_files = list_all_keys(MINIO_UNPROCESSED)
 
-    print("📦 Listing files in processed-data...")
+    print("Listing files in processed-data...")
     processed_files = list_all_keys(MINIO_PROCESSED)
 
     new_files = unprocessed_files - processed_files
 
     if not new_files:
-        print("✅ No new files to process.")
+        print("No new files to process.")
         return
 
-    print("🆕 New files to process:")
+    print("New files to process:")
     for file in sorted(new_files):
         print(f"  • {file}")
 
@@ -65,7 +65,7 @@ def main():
     offline_files = [f for f in new_files if f.endswith("offline.csv")]
 
     if not online_files and not offline_files:
-        print("⚠️ No online or offline files found in the new files.")
+        print("No online or offline files found in the new files.")
         return
 
     # collect new data for online and offline sales
@@ -89,9 +89,9 @@ def main():
         copy_source = {"Bucket": MINIO_UNPROCESSED, "Key": key}
         S3.copy(copy_source, MINIO_PROCESSED, key)
         #s3.delete_object(Bucket=MINIO_UNPROCESSED, Key=key) turned off for a while
-        print(f"☁️ Moved {key} to '{MINIO_PROCESSED}'")
+        print(f"Moved {key} to '{MINIO_PROCESSED}'")
 
-    print("✅ All done. Kol Hakavod")
+    print("All done. Kol Hakavod")
 
 if __name__ == "__main__":
     main()

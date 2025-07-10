@@ -3,10 +3,10 @@ import os
 import re
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from db.connection import get_connection
-from config import SCHEMAS, CREATE_TABLES_SCHEMAS
+from config import SCHEMAS, CREATE_TABLES_SCHEMAS_PATH
 
 def run_schema_sql():
-    with open(CREATE_TABLES_SCHEMAS, "r") as f:
+    with open(CREATE_TABLES_SCHEMAS_PATH, "r") as f:
         full_sql = f.read()
 
     # Parse individual CREATE TABLE blocks
