@@ -2,9 +2,10 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from db.connection import get_connection
+from config import TRUNCATE_ALL_TABLES
 
 def run_truncate_sql():
-    with open("db/ddl/trancate_all_tables.sql", "r") as f:
+    with open(TRUNCATE_ALL_TABLES, "r") as f:
         sql = f.read()
 
     conn = get_connection()

@@ -1,9 +1,4 @@
-import sys
-import os
 import pandas as pd
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning, module="pandas.io.sql")
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Processes 2 dfs online and offline
 def transform_sales(online_df: pd.DataFrame, offline_df: pd.DataFrame, conn, schema) -> pd.DataFrame:

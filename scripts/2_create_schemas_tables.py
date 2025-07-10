@@ -3,12 +3,10 @@ import os
 import re
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from db.connection import get_connection
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from config import SCHEMAS, CREATE_TABLE_SCHEMAS
+from config import SCHEMAS, CREATE_TABLES_SCHEMAS
 
 def run_schema_sql():
-    with open(CREATE_TABLE_SCHEMAS, "r") as f:
+    with open(CREATE_TABLES_SCHEMAS, "r") as f:
         full_sql = f.read()
 
     # Parse individual CREATE TABLE blocks
@@ -80,7 +78,6 @@ def extract_all_table_sql(sql_text):
                 inside_block = False
 
     return table_sql_map
-
 
 if __name__ == "__main__":
     run_schema_sql()

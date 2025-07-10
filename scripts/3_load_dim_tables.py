@@ -1,11 +1,9 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import pandas as pd
 from datetime import datetime
-from db.connection import get_connection
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from db.connection import get_connection
 from config import SCHEMAS, SEEDS, SEEDS_MAPPING
 
 def insert_dataframe_to_table(df, table_name, schema, conn):
