@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 import boto3
 import pandas as pd
@@ -10,6 +11,10 @@ from kaggle.api.kaggle_api_extended import KaggleApi
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from config import ONLINE_FILE_NAME, OFFLINE_FILE_NAME, RAW_DATA_FOLDER,\
+                    DOWNLOAD_TEMP, S3, DATASET, TMSTMP, DATE
+
 # Load .env file
 load_dotenv()
 
@@ -18,18 +23,10 @@ MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT")
 ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
 SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
 BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME")
-DATASET = "larysa21/retail-data-american-football-gear-sales"
-
-# Settings
-ONLINE_FILE_NAME = "AF_online_sales_dataset.csv"
-OFFLINE_FILE_NAME = "AF_offline_sales_dataset.csv"
-
-RAW_DATA_FOLDER = "raw_data"
-DOWNLOAD_TEMP = "tmp_download"
 
 # Initialize S3 client
 s3 = boto3.client(
-    's3',
+    S3,
     endpoint_url=MINIO_ENDPOINT,
     aws_access_key_id=ACCESS_KEY,
     aws_secret_access_key=SECRET_KEY,
@@ -88,8 +85,8 @@ else:
 
     # Define which column to sort each file by
     sort_info = {
-        ONLINE_FILE_NAME: "tmstmp",
-        OFFLINE_FILE_NAME: "date"
+        ONLINE_FILE_NAME: TMSTMP,
+        OFFLINE_FILE_NAME: DATE
     }
 
     for file, sort_column in sort_info.items():
