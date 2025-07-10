@@ -1,22 +1,10 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import pandas as pd
 from datetime import datetime
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from db.connection import get_connection
-
-DATA_DIR = "seeds"
-SCHEMAS = ["prod", "playground"]
-
-FILE_TABLE_MAP = {
-    "employees.csv": "employees",
-    "payment_methods.csv": "payment_methods",
-    "product_categories.csv": "product_categories",
-    "product_subcategories.csv": "product_subcategories",
-    "products.csv": "products",
-    "shipping_methods.csv": "shipping_methods",
-    "stores.csv": "stores"
-}
+from config import SCHEMAS, SEEDS, SEEDS_MAPPING
 
 def insert_dataframe_to_table(df, table_name, schema, conn):
     df['inserted_at'] = datetime.now()
@@ -39,8 +27,8 @@ def load_all_files():
     inserted_any = False  # Track whether anything got inserted
     inserted_count = 0  # New counter
 
-    for file_name, table_name in FILE_TABLE_MAP.items():
-        file_path = os.path.join(DATA_DIR, file_name)
+    for file_name, table_name in SEEDS_MAPPING.items():
+        file_path = os.path.join(SEEDS, file_name)
 
         if not os.path.exists(file_path):
             print(f"File not found: {file_path}")

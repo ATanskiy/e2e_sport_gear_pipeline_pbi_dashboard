@@ -2,12 +2,13 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from config import DROP_TABLE_SCHEMAS_PATH
 
 # run_sql_init.py
 from db.connection import get_connection
 
 def run_schema_sql():
-    with open("db/ddl/drop_schemas_tables.sql", "r") as f:
+    with open(DROP_TABLE_SCHEMAS_PATH, "r") as f:
         sql = f.read()
 
     conn = get_connection()

@@ -2,11 +2,11 @@ import sys
 import os
 import re
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 from db.connection import get_connection
+from config import SCHEMAS, CREATE_TABLES_SCHEMAS_PATH
 
 def run_schema_sql():
-    with open("db/ddl/create_schemas_tables.sql", "r") as f:
+    with open(CREATE_TABLES_SCHEMAS_PATH, "r") as f:
         full_sql = f.read()
 
     # Parse individual CREATE TABLE blocks
@@ -15,10 +15,9 @@ def run_schema_sql():
     conn = get_connection()
     cur = conn.cursor()
 
-    schemas = ["prod", "playground"]
     tables = list(table_sql_map.keys())
 
-    for schema in schemas:
+    for schema in SCHEMAS:
         # Create schema if needed
         cur.execute("SELECT schema_name FROM information_schema.schemata WHERE schema_name = %s", (schema,))
         if cur.fetchone():
@@ -40,7 +39,7 @@ def run_schema_sql():
             if exists:
                 print(f"Table '{table}' exists in schema '{schema}'.")
             else:
-                print(f"➕ Table '{table}' created in schema '{schema}'.")
+                print(f"Table '{table}' created in schema '{schema}'.")
                 sql = table_sql_map[table].replace("{{schema}}", schema)
                 cur.execute(sql)
 
@@ -79,7 +78,6 @@ def extract_all_table_sql(sql_text):
                 inside_block = False
 
     return table_sql_map
-
 
 if __name__ == "__main__":
     run_schema_sql()
