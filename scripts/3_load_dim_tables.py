@@ -1,8 +1,6 @@
-import sys
 import os
 import pandas as pd
 from datetime import datetime
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from db.connection import get_connection
 from config import SCHEMAS, SEEDS, SEEDS_MAPPING
 

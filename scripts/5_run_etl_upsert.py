@@ -1,8 +1,5 @@
-import os
-import sys
 import pandas as pd
 from botocore.exceptions import ClientError
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from db.connection import get_connection
 from etl.etl_customers import transform_customers, upsert_customers
 from etl.etl_sales import transform_sales, upsert_sales
@@ -10,7 +7,6 @@ from etl.etl_sales import transform_sales, upsert_sales
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="pandas.io.sql")
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from config import S3, MINIO_PROCESSED, MINIO_UNPROCESSED
 
 def list_all_keys(bucket_name):

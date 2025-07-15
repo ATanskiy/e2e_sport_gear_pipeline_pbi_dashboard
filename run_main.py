@@ -3,8 +3,6 @@ import time
 import os
 import sys
 from config import SCRIPTS
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from config import TIME_TO_SLEEP
 
 # 1. Use the same Python interpreter that runs this script
