@@ -1,6 +1,6 @@
 -- Then truncate dimension tables
 TRUNCATE TABLE
-    {{schema}}.sales
+    {{schema}}.sales,
     {{schema}}.products,
     {{schema}}.product_subcategories,
     {{schema}}.product_categories,

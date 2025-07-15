@@ -56,15 +56,30 @@ def process_one_day(raw_online, raw_offline, current_date):
     write_csv_to_s3(online_day, MINIO_UNPROCESSED, f"{prefix}online.csv")
     write_csv_to_s3(offline_day, MINIO_UNPROCESSED, f"{prefix}offline.csv")
 
+def ensure_bucket_exists(bucket):
+    """Ensures a bucket exists in S3, creates it if not."""
+    try:
+        S3.head_bucket(Bucket=bucket)
+    except ClientError:
+        print(f"Creating bucket '{bucket}'...")
+        S3.create_bucket(Bucket=bucket)
+
 # loads full df into memory once, finds earliest date from both sources,
 # in a loop: gets processed dates from s3, finds next date to process, saves per day CSVs
 # to unprocessed-data bucket, sleeps for selected time
-def main_loop():
-    # Load raw files once into memory
+def extract_raw_to_s3_daily():
+    """
+    Loads full raw data into memory, then loops:
+    - checks which days were processed
+    - processes one more day
+    - uploads online/offline CSVs for that day
+    - waits TIME_TO_SLEEP seconds
+    """
+    ensure_bucket_exists(MINIO_UNPROCESSED)
+
     raw_online = read_csv_from_s3(MINIO_RAW, ONLINE_FILE_NAME, TMSTMP)
     raw_offline = read_csv_from_s3(MINIO_RAW, OFFLINE_FILE_NAME, DATE)
 
-    # Get date range from data
     min_date = min(raw_online[TMSTMP].min(), raw_offline[DATE].min())
     min_date = min_date.replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -79,13 +94,3 @@ def main_loop():
 
         print(f"Sleeping for {TIME_TO_SLEEP} seconds...\n")
         time.sleep(TIME_TO_SLEEP)
-
-if __name__ == "__main__":
-    ## Ensure processed-data bucket exists
-    try:
-        S3.head_bucket(Bucket=MINIO_UNPROCESSED)
-    except ClientError:
-        print(f"Creating bucket '{MINIO_UNPROCESSED}'...")
-        S3.create_bucket(Bucket=MINIO_UNPROCESSED)
-
-    main_loop()

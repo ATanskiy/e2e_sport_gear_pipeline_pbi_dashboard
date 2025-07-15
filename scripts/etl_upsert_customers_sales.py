@@ -38,7 +38,7 @@ def download_and_concat(file_list):
         dfs.append(df)
     return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
 
-def main():
+def etl_upsert_customer_sales():
     ensure_processed_bucket_exists()
 
     print("Listing files in unprocessed-data...")
@@ -88,6 +88,3 @@ def main():
         print(f"Moved {key} to '{MINIO_PROCESSED}'")
 
     print("All done. Kol Hakavod")
-
-if __name__ == "__main__":
-    main()

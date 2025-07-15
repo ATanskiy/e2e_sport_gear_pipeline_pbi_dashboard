@@ -70,14 +70,6 @@ DROP_TABLE_SCHEMAS_PATH = "db/ddl/drop_schemas_tables.sql"
 TRUNCATE_ALL_TABLES_PATH = "db/ddl/trancate_all_tables.sql"
 TRUNCATE_DIM_TABLES_PATH = "db/ddl/trancate_dim_tables.sql"
 
-# Scripts to run in order
-SCRIPTS = [
-    "scripts/1_download_to_s3_raw.py",
-    "scripts/2_create_schemas_tables.py",
-    "scripts/3_load_dim_tables.py",
-    "scripts/4_extract_raw_to_s3_daily.py"
-]
-
 SCRIPT_ETL = "scripts/5_run_etl_upsert.py"
 
 #ETL part
